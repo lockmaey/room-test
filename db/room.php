@@ -45,9 +45,35 @@
 			return $data;
 		}
 
+		function filter($data){
+			$filterdata = array();
+			if(!empty($data['price']) && !is_null($data['status'])) {
+				$stmt = $this->dbCon->prepare("SELECT * FROM room WHERE price = ? AND status = ?");
+				$stmt->bind_param("di",$data['price'],$data['status']);
+			} else if(empty($data['price']) && !is_null($data['status'])) {
+				$stmt = $this->dbCon->prepare("SELECT * FROM room WHERE status = ?");
+				$stmt->bind_param("i",$data['status']);
+			} else if(!empty($data['price']) && is_null($data['status'])) {
+				$stmt = $this->dbCon->prepare("SELECT * FROM room WHERE price = ?");
+				$stmt->bind_param("d",$data['price']);
+			} else { return $filterdata;}
+			$stmt->execute();
+			$stmt->bind_result($id, $name, $price, $status);
+			
+			while ($stmt->fetch()) {
+				$filterdata[] = [ 
+					    'id' => $id,
+					    'name' => $name,
+					    'price' => $price,
+					    'status' => $status
+				    ];
+			}
+			return $filterdata;
+		}
+
 		function add($data){
 			$stmt = $this->dbCon->prepare("INSERT INTO room(name, price,status) values(?,?,?)");
-			$stmt->bind_param("sds",$data['name'],$data['price'],$data['status']);
+			$stmt->bind_param("sdi",$data['name'],$data['price'],$data['status']);
 			$stmt->execute();
 		}
 
@@ -59,7 +85,7 @@
 
 		function update($data){
 			$stmt = $this->dbCon->prepare("UPDATE room SET name=?, price=?,status=? WHERE id=?");
-			$stmt->bind_param("sdsi",$data['name'],$data['price'],$data['status'],$data['id']);
+			$stmt->bind_param("sdii",$data['name'],$data['price'],$data['status'],$data['id']);
 			$stmt->execute();
 		}
 	}
