@@ -23,7 +23,7 @@
 			<td><?= $dataroom['price'] ?></td>
 			<td><?= ($dataroom['status'] == 1) ? "Available" :"Not Available" ?></td>
 			<td>
-				<a href="../controller/delete.php?id=<?=$dataroom['id']?>">delete</a>
+				<a href="../controller/room.php?action=delete&id=<?=$dataroom['id']?>">delete</a>
 				<a href="room.php?id=<?=$dataroom['id']?>">update</a>
 			</td>
 			</tr>
@@ -33,7 +33,7 @@
 	<?php if(!empty($_GET['id'])) {?>
 	<?php $oneroom = $room->find($_GET['id']);?>
 	<?php } ?>
-	<form method="post" action="../controller/save.php">
+	<form method="post" action="../controller/room.php?action=save">
 		name: <input type = "text" name="name" value="<?= $oneroom['name']?>"><br />
 		price: <input type = "text" name="price" value="<?= $oneroom['price']?>"><br />
 		status:  <input type="radio" name="status" value="1" <?= $oneroom['status']==1 ? "checked": ""?>> Available<br>
